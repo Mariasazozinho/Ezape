@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rede da Esperança</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #e6f9f0;
+      color: #000;
+      text-align: center;
+    }
+
+    header {
+      background: #b3e5fc;
+      color: #000;
+      padding: 1em;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    nav a {
+      color: #000;
+      margin: 0 1em;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    section, .container {
+      padding: 2em;
+      background: #ffffff;
+      margin: 2em auto;
+      max-width: 800px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    form label, .container label {
+      display: block;
+      margin: 0.5em 0 0.2em;
+      font-weight: bold;
+    }
+
+    input, select {
+      padding: 0.5em;
+      width: 100%;
+      max-width: 600px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 1em;
+    }
+
+    button {
+      padding: 0.7em 1.5em;
+      background: #81c784;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #66bb6a;
+    }
+
+    .cadastro-item {
+      background: #f0f4c3;
+      padding: 1em;
+      margin: 1em 0;
+      border-radius: 5px;
+    }
+
+    #mapaEcopontos {
+      width: 100%;
+      background-color: #e3f2fd;
+      padding: 1em;
+      border-radius: 10px;
+    }
+
+    h2 {
+      color: #007bff;
+    }
+
+    /* Cores adicionais para impacto ambiental */
+    .impacto-vermelho {
+      background-color: #ffebee;
+    }
+
+    .impacto-laranja {
+      background-color: #fff3e0;
+    }
+
+    .impacto-amarelo {
+      background-color: #fffde7;
+    }
+
+    .impacto-verde {
+      background-color: #e8f5e9;
+    }
+
+    .impacto-azul {
+      background-color: #e3f2fd;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Rede da Esperança - EcoTroca 🌍♻️</h1>
+    <h3>Transforme seu lixo em futuro – Recicle, troque e renove!</h3>
+    <nav>
+      <a href="#cadastro">Cadastro</a>
+      <a href="#mapa">Mapa de Ecopontos</a>
+      <a href="explicacao.html">Sobre o Projeto</a>
+    </nav>
+  </header>
+
+  <section id="cadastro">
+    <h2>Cadastro de Reciclagem</h2>
+    <p>Cadastre sua ação sustentável e ganhe recompensas! Escolha o restaurante parceiro e o catador mais próximo.</p>
+    <form id="formReciclagem">
+      <label for="nome">Nome:</label>
+      <input type="text" name="nome" id="nome" required>
+
+      <label for="material">Material:</label>
+      <select id="material">
+        <option value="papel">Papel</option>
+        <option value="plastico">Plástico</option>
+        <option value="vidro">Vidro</option>
+        <option value="organico">Orgânico</option>
+      </select>
+
+      <label for="peso">Peso (kg):</label>
+      <input type="number" id="peso" min="0">
+
+      <label for="recompensa">Recompensa desejada:</label>
+      <select name="recompensa" id="recompensaSelect">
+        <option value="Desconto no restaurante">Desconto no restaurante</option>
+        <option value="Pontos para sorteio">Pontos para sorteio</option>
+        <option value="Brinde ecológico">Brinde ecológico</option>
+      </select>
+
+      <label for="restaurante">Restaurante parceiro:</label>
+      <select name="restaurante" id="restaurante">
+        <option value="Restaurante VerdeVida">Restaurante VerdeVida</option>
+        <option value="Sabor Natural">Sabor Natural</option>
+        <option value="EcoBurguer">EcoBurguer</option>
+      </select>
+
+      <label for="catador">Catador disponível:</label>
+      <select name="catador" id="catador">
+        <option value="João Silva">João Silva</option>
+        <option value="Maria das Dores">Maria das Dores</option>
+        <option value="Carlos Recicla">Carlos Recicla</option>
+      </select>
+
+      <button type="button" onclick="adicionarReciclavel()">Cadastrar</button>
+    </form>
+    <p id="pontosTotal">Pontos acumulados: 0</p>
+    <div id="listaCadastros"></div>
+  </section>
+
+  <section id="mapa">
+    <h2>Mapa de Ecopontos</h2>
+    <p>Veja onde estão os pontos de entrega de recicláveis mais próximos da sua região:</p>
+    <div id="mapaEcopontos"></div>
+  </section>
+
+  <script>
+    const materiais = {
+      papel: { pontos: 10 },
+      plastico: { pontos: 20 },
+      vidro: { pontos: 15 },
+      organico: { pontos: 5 }
+    };
+
+    let pontos = 0;
+
+    function adicionarReciclavel() {
+      const nome = document.getElementById("nome").value;
+      const materialSelecionado = document.getElementById("material").value;
+      const peso = parseFloat(document.getElementById("peso").value);
+      const recompensa = document.getElementById("recompensaSelect").value;
+      const restaurante = document.getElementById("restaurante").value;
+      const catador = document.getElementById("catador").value;
+
+      if (!nome || isNaN(peso) || peso <= 0) {
+        alert("Por favor, preencha todos os campos corretamente.");
+        return;
+      }
+
+      const pontosGanhos = materiais[materialSelecionado].pontos * peso;
+      pontos += pontosGanhos;
+
+      const novoCadastro = `
+        <div class='cadastro-item impacto-verde'>
+          <p><strong>Nome:</strong> ${nome}</p>
+          <p><strong>Material:</strong> ${materialSelecionado}</p>
+          <p><strong>Peso:</strong> ${peso} kg</p>
+          <p><strong>Recompensa:</strong> ${recompensa}</p>
+          <p><strong>Restaurante Parceiro:</strong> ${restaurante}</p>
+          <p><strong>Catador Disponível:</strong> ${catador}</p>
+          <p><strong>Pontos ganhos:</strong> ${pontosGanhos}</p>
+        </div>
+      `;
+
+      document.getElementById("listaCadastros").innerHTML += novoCadastro;
+      document.getElementById("pontosTotal").innerText = `Pontos acumulados: ${pontos}`;
+
+      document.getElementById("formReciclagem").reset();
+    }
+
+    window.onload = function () {
+      const mapa = document.getElementById('mapaEcopontos');
+      mapa.innerHTML = `
+        <ul>
+          <li><strong>EcoPonto Zona Leste</strong> - Rua Verde, 123 - Itaquera</li>
+          <li><strong>EcoPonto Centro</strong> - Av. Sustentável, 456 - Sé</li>
+          <li><strong>EcoPonto Sul</strong> - Estrada do Reciclo, 789 - Capão Redondo</li>
+          <li><strong>EcoPonto Norte</strong> - Rua do Meio Ambiente, 101 - Santana</li>
+          <li><strong>EcoPonto Oeste</strong> - Alameda EcoVida, 555 - Lapa</li>
+          <li><strong>EcoPonto Vila Mariana</strong> - Av. Verdejante, 202 - Vila Mariana</li>
+        </ul>
+      `;
+    };
+  </script>
+</body>
+</html>
